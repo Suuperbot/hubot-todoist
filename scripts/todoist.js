@@ -25,15 +25,15 @@ const basedata = {
 function requestTask(msg) {
   msg.send("タスクを取得しています......");
   var projectdata = basedata;
-  projectdata["resource_types"] = '["projects","items"]';
+  projectdata["resource_types"] = '["projects","items","collaborators"]';
   var urloption = baseoption;
   urloption["headers"]["Content-Length"] = querystring.stringify(projectdata).length;
   var datas = "";
-  var req = https.request(urloption,(res) => {
-    res.on('data',(data) => {
+  var req = https.request(urloption,function(res) {
+    res.on('data',function(data){
       datas += data;
     });
-    res.on('end',() => {
+    res.on('end',function() {
       showTask(msg,JSON.parse(datas.toString()));
     });
   });
@@ -49,7 +49,7 @@ function showTask(msg,data) {
       }
     },
     function(id){
-      data.items.filter((item,index) => {
+      data.items.filter(function(item,index) {
         if(item.project_id == id){
           text = item["date_string"] + " : " + item["content"];
           msg.send(text);
@@ -57,15 +57,6 @@ function showTask(msg,data) {
       });
     }
   );
-
-  //msg.send(JSON.stringify(projcet));
-  //msg.send(project_id);
-  /*
-  var items = data["items"].filter((item,index)  => {
-    if(item.projcet_id == project_id) return true;
-  });
-  */
-  // msg.send(JSON.stringify(items));
 }
 
 module.exports = function(robot) {
